@@ -1,0 +1,45 @@
+{
+  "name": "telegram-notifications-mcp",
+  "version": "1.0.1",
+  "description": "Telegram notifications MCP server with local and hosted modes; opt-in administrator chat discovery.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gmoz22/telegram-notifications-mcp.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "telegram-notifs-mcp": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    ".env.example",
+    "config.example.json",
+    "Dockerfile",
+    "docker-compose.yml"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "prepack": "npm run build",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
+    "test": "npm run build && node --test test/config.test.js test/init.test.js test/cli.test.js test/server.test.js test/telegram.test.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/express": "2.0.2",
+    "@modelcontextprotocol/node": "2.1.2",
+    "@modelcontextprotocol/server": "2.4.0",
+    "express": "5.3.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.4.0",
+    "@types/express": "5.0.6",
+    "@types/node": "26.6.6",
+    "typescript": "7.0.2"
+  }
+}

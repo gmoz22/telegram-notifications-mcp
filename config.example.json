@@ -1,0 +1,12 @@
+{
+  "targets": {
+    "dev-status": {
+      "bot": "My_Unique_Bot_Name",
+      "token": "${TELEGRAM_DEV_BOT_TOKEN}"
+    }
+  },
+  "clients": {},
+  "discovery": {
+    "enabled": true
+  }
+}

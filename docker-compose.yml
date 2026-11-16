@@ -1,0 +1,26 @@
+services:
+  telegram-notifs-mcp:
+    build:
+      context: .
+    restart: unless-stopped
+    user: "${TELEGRAM_MCP_UID:-1000}:${TELEGRAM_MCP_GID:-1000}"
+    environment:
+      TELEGRAM_MCP_HOST: 0.0.0.0
+      TELEGRAM_MCP_PORT: 3000
+      TELEGRAM_MCP_ALLOWED_HOSTS: ${TELEGRAM_MCP_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      TELEGRAM_NOTIF_CONFIG_FILE: /data/config.json
+      TELEGRAM_DEV_BOT_TOKEN: ${TELEGRAM_DEV_BOT_TOKEN:-}
+      TELEGRAM_OPS_BOT_TOKEN: ${TELEGRAM_OPS_BOT_TOKEN:-}
+      TELEGRAM_NOTIF_CONFIG:
+      TELEGRAM_MCP_ALLOWED_ORIGINS:
+      TELEGRAM_MCP_DISCOVERY_ENABLED:
+      # Coolify generates and stores this once; plain Compose leaves it empty
+      # and the server keeps its self-generated /data key instead.
+      TELEGRAM_MCP_ADMIN_KEY: ${SERVICE_PASSWORD_64_TELEGRAMADMIN:-}
+    volumes:
+      - telegram-notif-data:/data
+    ports:
+      - "127.0.0.1:3000:3000"
+
+volumes:
+  telegram-notif-data:

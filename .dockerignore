@@ -1,0 +1,13 @@
+.git
+.github
+.vscode
+node_modules
+dist
+test
+*.log
+.env
+targets.json
+config/targets.json
+config.json
+**/*.secrets
+data
