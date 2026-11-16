@@ -686,8 +686,6 @@ The first match wins:
 3. `TELEGRAM_NOTIF_CONFIG_FILE`: a file path.
 4. The default path above, or an existing legacy file.
 
-Existing `config.json` and `targets.json` files in the former `telegram-notif-mcp` directory are reused in place. The former Windows `targets.json` location is `~/.config/telegram-notif-mcp/targets.json`. If more than one default or legacy file exists, select one with `--config` or `TELEGRAM_NOTIF_CONFIG_FILE`. Managed secrets remain beside their config.
-
 ### Environment variables
 
 | Variable | Purpose |
@@ -781,7 +779,7 @@ npm install --global telegram-notifications-mcp@latest   # update
 npm install --global telegram-notifications-mcp@1        # stay on 1.x
 ```
 
-To pin an exact release, append its version, for example `@1.0.1` if that release is available. Version `1.0.0` uses the former CLI command `telegram-notif-mcp`; use a release containing the rename for `telegram-notifs-mcp`. Restart your MCP servers after updating and change their configured command. Your `config.json` is not touched.
+To pin an exact release, append its version, for example `@1.0.2` if that release is available. Restart your MCP servers after updating and change their configured command. Your `config.json` is not touched.
 
 To skip the global install, an MCP entry can run the package through `npx` instead:
 

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, readFile, rm, stat, symlink, unlink, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, stat, symlink, unlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -25,46 +25,33 @@ async function withConfig(run) {
   }
 }
 
-test("platform defaults and explicit/legacy path selection are unambiguous", async () => {
+test("platform defaults and explicit config paths", async () => {
   assert.equal(defaultConfigPath({}, "darwin", "/Users/example"),
     path.join("/Users/example", ".config", "telegram-notifs-mcp", "config.json"));
   assert.equal(defaultConfigPath({ LOCALAPPDATA: "C:\\Users\\Example\\AppData\\Local" }, "win32", "C:\\Users\\Example"),
     "C:\\Users\\Example\\AppData\\Local\\telegram-notifs-mcp\\config.json");
   await withConfig(async (_filename, home) => {
     const canonical = await resolveConfigPath({ home, platform: "darwin", env: {} });
-    const oldDirectory = path.join(home, ".config", "telegram-notif-mcp");
-    const oldConfig = path.join(oldDirectory, "config.json");
-    const oldTargets = path.join(oldDirectory, "targets.json");
-    const newTargets = path.join(path.dirname(canonical), "targets.json");
-    const initialized = await initializeConfig({ configPath: oldConfig, hosted: true, env: {} });
-    const original = await readFile(oldConfig, "utf8");
+    const configPath = path.join(home, "custom-config.json");
+    assert.equal(await resolveConfigPath({ configPath, env: {} }), configPath);
+    assert.equal(await resolveConfigPath({ env: { TELEGRAM_NOTIF_CONFIG_FILE: configPath } }), configPath);
+    await initializeConfig({ configPath: canonical, hosted: true, env: {} });
+    const original = await readFile(canonical, "utf8");
     const hash = JSON.parse(original).discovery.adminKeySha256;
-    const key = await readManagedKey(oldConfig, hash);
-    assert.equal(await resolveConfigPath({ home, platform: "darwin", env: {} }), oldConfig);
-    assert.equal((await initializeConfig({ configPath: await resolveConfigPath({ home, platform: "darwin", env: {} }), hosted: true, env: {} })).created, false);
-    assert.equal(await readFile(oldConfig, "utf8"), original);
-    assert.equal(await readManagedKey(oldConfig, hash), key);
-    await mkdir(path.dirname(canonical), { recursive: true });
-    await writeFile(canonical, original);
-    await assert.rejects(resolveConfigPath({ home, platform: "darwin", env: {} }), /Multiple default configuration files/);
-    assert.equal(await resolveConfigPath({ configPath: oldConfig, env: {} }), oldConfig);
-    await unlink(canonical);
-    await unlink(initialized.configPath);
-    for (const legacy of [oldTargets, newTargets]) {
-      await writeFile(legacy, original);
-      assert.equal(await resolveConfigPath({ home, platform: "darwin", env: {} }), legacy);
-      await unlink(legacy);
-    }
+    const key = await readManagedKey(canonical, hash);
     assert.equal(await resolveConfigPath({ home, platform: "darwin", env: {} }), canonical);
+    assert.equal((await initializeConfig({ configPath: await resolveConfigPath({ home, platform: "darwin", env: {} }), hosted: true, env: {} })).created, false);
+    assert.equal(await readFile(canonical, "utf8"), original);
+    assert.equal(await readManagedKey(canonical, hash), key);
   });
 });
 
-test("Windows resolves the previous local config path when it exists", { skip: process.platform !== "win32" }, async () => {
+test("Windows resolves the default local config path when it exists", { skip: process.platform !== "win32" }, async () => {
   await withConfig(async (_filename, home) => {
     const env = { LOCALAPPDATA: path.join(home, "Local") };
-    const oldConfig = path.join(env.LOCALAPPDATA, "telegram-notif-mcp", "config.json");
-    await initializeConfig({ configPath: oldConfig, env });
-    assert.equal(await resolveConfigPath({ home, platform: "win32", env }), oldConfig);
+    const configPath = path.join(env.LOCALAPPDATA, "telegram-notifs-mcp", "config.json");
+    await initializeConfig({ configPath, env });
+    assert.equal(await resolveConfigPath({ home, platform: "win32", env }), configPath);
   });
 });
 

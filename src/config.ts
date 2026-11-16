@@ -80,11 +80,8 @@ export async function resolveConfigPath(options: {
   const home = options.home ?? os.homedir();
   const canonical = defaultConfigPath(env, platform, home);
   const pathApi = platform === "win32" ? path.win32 : path;
-  const oldConfig = pathApi.join(pathApi.dirname(pathApi.dirname(canonical)), "telegram-notif-mcp", "config.json");
   const candidates = [
     canonical,
-    oldConfig,
-    pathApi.join(home, ".config", "telegram-notif-mcp", "targets.json"),
     pathApi.join(home, ".config", "telegram-notifs-mcp", "targets.json"),
   ];
   const exists = await Promise.all(candidates.map(fileExists));

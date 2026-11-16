@@ -1,12 +1,13 @@
 {
   "name": "telegram-notifications-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Telegram notifications MCP server with local and hosted modes; opt-in administrator chat discovery.",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/gmoz22/telegram-notifications-mcp.git"
   },
+  "keywords": ["telegram", "notifications", "mcp"],
   "type": "module",
   "engines": {
     "node": ">=20"
